@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		title="Hello">
+	
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		
+		.title { color:#2299ff; fontSize:28; fontWeight:normal; }
+		.bye { color:#ff2299; fontSize:20; fontWeight:bold; }
+	</fx:Style>
+
+	<fx:Script>
+		<![CDATA[
+			private var hello:Boolean = true;
+			
+			private function click():void {
+				hello = !hello;
+				lbl.text = (hello ? 'Hello Flex Mobile' : 'Goodbye Flex Mobile');
+				btn.label = (hello ? 'GOODBYE' : 'HELLO');
+			}
+		]]>
+	</fx:Script>
+	
+	<s:VGroup left="20" right="20" top="20" bottom="20" gap="12" horizontalAlign="center">
+		<s:Label id="lbl" text="Hello Flex Mobile" styleName="title" />
+		<s:Button id="btn" label="GOODBYE" height="60" styleName="bye" click="click()" />
+	</s:VGroup>
+</s:View>
