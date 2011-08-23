@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	applicationComplete="complete()">
+	
+	<fx:Script>
+		<![CDATA[
+			private static const DURATION:int = 5000; //5 seconds
+			
+			private var _mic:Microphone;
+			
+			private var _soundData:ByteArray;
+			private var _sound:Sound;
+			private var _channel:SoundChannel;
+			
+			private var _timeStart:Number;
+			private var _timeEnd:Number;
+			[Bindable] private var _pct:Number;
+			
+			private function complete():void {
+				if (Microphone.isSupported) {
+					_mic = Microphone.getMicrophone();
+					_mic.rate = 44;
+					_mic.gain = 60;
+				}
+			}
+			
+			/* **********  PLAY  ********** */
+			private function play():void {
+				_pct = 0.0;
+				playBtn.enabled = recordBtn.enabled = false;
+				
+				_soundData.position = 0;
+				_sound = new Sound();
+				_sound.addEventListener(SampleDataEvent.SAMPLE_DATA, playbackDataHandler);
+				_channel = _sound.play();
+				_channel.addEventListener(Event.SOUND_COMPLETE, playbackComplete);
+				
+				addEventListener(Event.ENTER_FRAME, playbackTick);
+			}
+			
+			private function playbackDataHandler(e:SampleDataEvent):void {
+				for (var i:int = 0; i < 8192 && _soundData.bytesAvailable > 0; i++) {
+					var f:Number = _soundData.readFloat();
+					e.data.writeFloat(f);
+					e.data.writeFloat(f);
+				}
+			}
+			
+			private function playbackTick(e:Event):void {
+				_pct = _channel.position / DURATION;
+			}
+			
+			private function playbackComplete(e:Event):void {
+				_pct = 0;
+				playBtn.enabled = recordBtn.enabled = true;
+				
+				removeEventListener(Event.ENTER_FRAME, playbackTick);
+			}
+			
+			/* **********  RECORD  ********** */
+			private function record():void {
+				if (_mic != null) {
+					playBtn.enabled = recordBtn.enabled = false;
+
+					_soundData = new ByteArray();
+					_mic.setSilenceLevel(0, DURATION);
+					_mic.addEventListener(SampleDataEvent.SAMPLE_DATA, micDataHandler);
+					
+					_timeStart = new Date().time;
+					_timeEnd = _timeStart + DURATION;
+					_pct = 0.0;
+					
+					addEventListener(Event.ENTER_FRAME, recordTick);
+				}
+			}
+			
+			private function micDataHandler(e:SampleDataEvent):void {
+				while(e.data.bytesAvailable) {
+					var f:Number = e.data.readFloat();
+					_soundData.writeFloat(f);
+				}
+			}
+			
+			private function recordTick(e:Event):void {
+				var t:Number = new Date().time;
+				if (t > _timeEnd) {
+					_pct = 1.0;
+					recordingComplete();
+				} else {
+					_pct = (t - _timeStart) / DURATION;
+				}
+			}
+			
+			private function recordingComplete():void {
+				playBtn.enabled = recordBtn.enabled = true;
+				
+				removeEventListener(Event.ENTER_FRAME, recordTick);
+				_mic.removeEventListener(SampleDataEvent.SAMPLE_DATA, micDataHandler);
+				_mic.setSilenceLevel(100);
+			}
+		]]>
+	</fx:Script>
+	
+	<!-- timer bar -->
+	<s:Group left="20" right="20" verticalCenter="0">
+		<s:Rect left="0" right="0" top="0" bottom="0">
+			<s:fill>
+				<s:SolidColor color="#333333" />
+			</s:fill>
+		</s:Rect>
+		<s:Rect id="timerBox" left="1" right="1" top="1" bottom="1">
+			<s:fill>
+				<s:SolidColor color="#eeeeee" />
+			</s:fill>
+		</s:Rect>
+		<s:Rect id="timerBar" left="{1 + timerBox.width * _pct * 0.5}" top="1" width="{timerBox.width * (1-_pct)}" height="16">
+			<s:fill>
+				<s:SolidColor color="#ff2299" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+	
+	<!-- button bar bg -->
+	<s:Rect left="0" right="0" bottom="0" height="60">
+		<s:fill>
+			<s:SolidColor color="#2299ff" />
+		</s:fill>
+	</s:Rect>
+	
+	<!-- buttons -->
+	<s:HGroup left="10" right="10" bottom="10" height="40" gap="10" horizontalAlign="center" verticalAlign="middle">
+		<s:Button id="playBtn" label="PLAY" width="50%" height="40" click="play()" enabled="false" />
+		<s:Button id="recordBtn" label="RECORD" width="50%" height="40" click="record()" />
+	</s:HGroup>
+</s:Application>

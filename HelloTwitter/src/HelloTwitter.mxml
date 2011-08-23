@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			private function searchHandler():void {
+				if (searchTxt.text.length > 0) {
+					var query:String = encodeURIComponent(searchTxt.text);
+					twitterService.send({ q:query, lang:'en' });
+				}
+				
+				//force softkeybard to hide
+				setFocus();
+			}
+			
+			private function searchResultHandler(e:ResultEvent):void {
+				var a:Array = [];
+				
+				var result:XML = e.result as XML;
+				var ns:Namespace = result.namespace('');
+				//trace(result.ns::entry[0].toXMLString());
+				
+				for each (var entry:XML in result.ns::entry) {
+					var tweet:String = entry.ns::title;
+					var name:String = entry.ns::author.ns::name;
+					var date:String = entry.ns::published;
+					var icon:String = (entry.ns::link.(@rel=='image')[0] as XML).@href;
+					
+					date = date.replace(/T.*/, '');
+					name = name.replace(/\s+\(.*/, '');
+					
+					a.push( { label:tweet, msg:'by ' + name + ' on ' + date, ico:icon } );
+				}
+				
+				output.dataProvider = new ArrayList(a);
+			}
+			private function searchFaultHandler(e:FaultEvent):void {
+				trace('FAULT!');
+				output.dataProvider = new ArrayList();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:HTTPService id="twitterService"
+					   url="http://search.twitter.com/search.atom"
+					   method="GET"
+					   resultFormat="e4x"
+					   result="searchResultHandler(event)"
+					   fault="searchFaultHandler(event)" />
+
+	</fx:Declarations>
+	
+	<s:TextInput id="searchTxt" left="10" right="10" top="10" height="50"
+				 maxChars="20"
+				 restrict="A-Za-z0-9 @#"
+				 enter="searchHandler()" />
+
+	<s:List id="output" left="10" right="10" bottom="10" top="70"
+			borderVisible="true">
+		<s:itemRenderer>
+			<fx:Component>
+				<s:IconItemRenderer
+					messageField="msg"
+					iconField="ico" 
+					iconWidth="48" iconHeight="48" />
+			</fx:Component>
+		</s:itemRenderer>
+	</s:List>
+</s:Application>
