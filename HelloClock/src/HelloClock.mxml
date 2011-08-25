@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:layouts="org.flexlayouts.layouts.*"
+	backgroundColor="#ff2299"
+	applicationComplete="complete()">
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable] private var D:Number = 100;
+			
+			private function complete():void {
+				D = (this.width < this.height ? this.width : this.height) - 50;
+				trace('D=' + D);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		
+		s|Label {
+			fontFamily:Georgia;
+		}
+		
+		.big {
+			fontSize:22;
+			fontWeight:bold;
+		}
+		.little {
+			fontSize:14;
+		}
+		
+		@media (application-dpi: 240) {
+			.big {
+				fontSize:33;
+			}
+			.little {
+				fontSize:21;
+			}
+		}
+		@media (application-dpi: 320) {
+			.big {
+				fontSize:44;
+			}
+			.little {
+				fontSize:28;
+			}
+		}
+	</fx:Style>
+	
+	<fx:Declarations>
+		<s:ArrayList id="clockData" source="['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII']" />
+	</fx:Declarations>
+	
+	<s:Group id="box" left="25" right="25" top="25" bottom="25">
+			
+		<!-- bg -->
+		<s:Ellipse id="face" width="{D}" height="{D}">
+			<s:fill>
+				<s:SolidColor color="#ffffff" />
+			</s:fill>
+		</s:Ellipse>
+		
+		<!-- clock numbers -->
+		<s:List x="25" y="25" width="{D-50}" height="{D-50}"
+				borderVisible="false" contentBackgroundAlpha="0"
+				dataProvider="{clockData}">
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer>
+						<s:Label text="{data}" color="#2299ff"
+								 styleName="{((itemIndex+1) % 3 == 0 ? 'big' : 'little')}" />
+					</s:ItemRenderer>
+				</fx:Component>
+			</s:itemRenderer>
+			<s:layout>
+				<layouts:CircleLayout rotation="-60" />
+			</s:layout>
+		</s:List>
+		
+		<!-- tick marks -->
+		<s:List x="4" y="4" width="{D-8}" height="{D-8}"
+				borderVisible="false" contentBackgroundAlpha="0"
+				dataProvider="{clockData}">
+			<s:itemRenderer>
+				<fx:Component>
+					<s:ItemRenderer>
+						<s:Rect width="{((itemIndex+1) % 3 == 0 ? 8 : 2)}" height="20" radiusX="{((itemIndex+1) % 3 == 0 ? 3 : 1)}">
+							<s:fill>
+								<s:SolidColor color="#333333" />
+							</s:fill>
+						</s:Rect>
+					</s:ItemRenderer>
+				</fx:Component>
+			</s:itemRenderer>
+			<s:layout>
+				<layouts:CircleLayout rotation="-60" rotateElements="true" />
+			</s:layout>
+		</s:List>
+		
+		<!-- ring -->
+		<s:Ellipse x="4" y="4" width="{D-8}" height="{D-8}">
+			<s:stroke>
+				<s:SolidColorStroke color="#333333" weight="8" />
+			</s:stroke>
+		</s:Ellipse>
+	</s:Group>
+</s:Application>
