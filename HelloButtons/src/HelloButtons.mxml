@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	backgroundColor="#111111">
+	
+	<fx:Style>
+		.greyBtn {
+			skinClass: ClassReference("skins.GreyButtonSkin");
+		}
+		.redBtn {
+			skinClass: ClassReference("skins.RedButtonSkin");
+			color: #ffffff;
+			textShadowColor: #333333;
+			textShadowAlpha: 0.4;
+		}
+		.blackBtn {
+			skinClass: ClassReference("skins.BlackButtonSkin");
+			color: #ffffff;
+			textShadowColor: #333333;
+			textShadowAlpha: 0.4;
+		}
+	</fx:Style>
+	
+	<s:VGroup left="25" right="25" top="10" bottom="10" verticalCenter="middle">
+		<s:Button label="Normal" width="100%" minHeight="50" styleName="greyBtn" />
+		<s:Button label="Alert"  width="100%" minHeight="50" styleName="redBtn" />
+		<s:Button label="Dark"   width="100%" minHeight="50" styleName="blackBtn" />
+	</s:VGroup>
+</s:Application>

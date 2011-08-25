@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graphic version="2.0" xmlns="http://ns.adobe.com/fxg/2008"
+	viewHeight="40" viewWidth="120"
+	scaleGridLeft="12" scaleGridTop="12" scaleGridRight="108" scaleGridBottom="28">
+	
+	<Rect x="0" y="0" width="120" height="40" radiusX="10" radiusY="10">
+		<fill>
+			<SolidColor color="#333333"/>
+		</fill>
+	</Rect>
+	
+	<Rect x="2" y="2" width="116" height="36" radiusX="9" radiusY="9">
+		<fill>
+			<LinearGradient rotation="90">
+				<GradientEntry color="#5e636a" ratio="0" />
+				<GradientEntry color="#262c35" ratio="0.5" />
+				<GradientEntry color="#151c27" ratio="0.51" />
+				<GradientEntry color="#262c35" ratio="1" />
+			</LinearGradient>
+		</fill>
+	</Rect>
+</Graphic>
