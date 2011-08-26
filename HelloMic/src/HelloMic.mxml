@@ -2,6 +2,8 @@
 <s:Application
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:comps="comps.*"
+	backgroundColor="#333333"
 	applicationComplete="complete()">
 	
 	<fx:Script>
@@ -72,6 +74,9 @@
 					_timeEnd = _timeStart + DURATION;
 					_pct = 0.0;
 					
+					graph.reset();
+					graph.xMax = DURATION;
+					
 					addEventListener(Event.ENTER_FRAME, recordTick);
 				}
 			}
@@ -90,6 +95,10 @@
 					recordingComplete();
 				} else {
 					_pct = (t - _timeStart) / DURATION;
+					
+					var p:Point = new Point(t - _timeStart, Math.random() * _pct); //_mic.activityLevel);
+					if (p.y < 0) { p.y = 0 }
+					graph.addPoint(p);
 				}
 			}
 			
@@ -103,24 +112,14 @@
 		]]>
 	</fx:Script>
 	
-	<!-- timer bar -->
-	<s:Group left="20" right="20" verticalCenter="0">
-		<s:Rect left="0" right="0" top="0" bottom="0">
-			<s:fill>
-				<s:SolidColor color="#333333" />
-			</s:fill>
-		</s:Rect>
-		<s:Rect id="timerBox" left="1" right="1" top="1" bottom="1">
-			<s:fill>
-				<s:SolidColor color="#eeeeee" />
-			</s:fill>
-		</s:Rect>
-		<s:Rect id="timerBar" left="{1 + timerBox.width * _pct * 0.5}" top="1" width="{timerBox.width * (1-_pct)}" height="16">
-			<s:fill>
-				<s:SolidColor color="#ff2299" />
-			</s:fill>
-		</s:Rect>
-	</s:Group>
+	<s:VGroup left="20" right="20" top="0" bottom="60" gap="1" verticalAlign="middle">
+		<comps:AreaGraph id="graph" width="100%" height="100"
+						 backgroundColor="0x222222"
+						 areaColor="0xff2299" />
+		<comps:TimerBar id="timerBar" width="100%" height="3" percent="{_pct}"
+						backgroundColor="0x666666"
+						barColor="0xffffff" />
+	</s:VGroup>
 	
 	<!-- button bar bg -->
 	<s:Rect left="0" right="0" bottom="0" height="60">
