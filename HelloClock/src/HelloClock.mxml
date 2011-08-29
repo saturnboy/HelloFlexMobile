@@ -3,6 +3,7 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark"
 	xmlns:layouts="org.flexlayouts.layouts.*"
+	xmlns:comps="comps.*"
 	backgroundColor="#ff2299"
 	applicationComplete="complete()">
 	
@@ -13,6 +14,33 @@
 			private function complete():void {
 				D = (this.width < this.height ? this.width : this.height) - 50;
 				trace('D=' + D);
+				
+				tickHandler(null);
+				var t:Timer = new Timer(1000);
+				t.addEventListener(TimerEvent.TIMER, tickHandler);
+				t.start();
+			}
+			
+			private function tickHandler(e:TimerEvent):void {
+				var t:Date = new Date();
+				
+				var h:Number = t.getHours();
+				var m:Number = t.getMinutes() + h * 60;
+				var s:Number = t.getSeconds() + m * 60;
+				var ms:Number = t.getMilliseconds();
+				
+				//multiply by 6 to get basic sec angle, then add up to
+				//5.994 degrees (999 * 0.006) to account for milliseconds
+				sec.rotation = -90 + s * 6 + ms * 0.006;
+				
+				//multiply by 6 to get basic min angle, then add up to
+				//5.9 degrees (59 * 0.1) to account for seconds
+				min.rotation = -90 + s * 0.1;
+				
+				//multiply by 30 to get basic hour angle, then add up to
+				//29.5 degrees (59 * 0.5) to account for minutes, and up to
+				//0.4916666667 degrees (59 * 1/120) to account for seconds
+				hr.rotation = -90 + (s / 120);
 			}
 		]]>
 	</fx:Script>
@@ -103,8 +131,25 @@
 		<!-- ring -->
 		<s:Ellipse x="4" y="4" width="{D-8}" height="{D-8}">
 			<s:stroke>
-				<s:SolidColorStroke color="#333333" weight="8" />
+				<s:SolidColorStroke color="#333333" weight="9" />
 			</s:stroke>
+		</s:Ellipse>
+		
+		<!-- hands -->
+		<comps:HourHand id="hr" x="{D * 0.5}" y="{D * 0.5}" width="{D * 0.3}" height="{D * 0.03}" />
+		<comps:MinuteHand id="min" x="{D * 0.5}" y="{D * 0.5}" width="{D * 0.4}" height="{D * 0.02}" />
+		<comps:SecondHand id="sec" x="{D * 0.5}" y="{D * 0.5}" width="{D * 0.5 - 15}" />
+		
+		<!-- center button -->
+		<s:Ellipse x="{D * 0.477}" y="{D * 0.477}" width="{D * 0.046}" height="{D * 0.046}">
+			<s:fill>
+				<s:SolidColor color="#ff2299" />
+			</s:fill>
+		</s:Ellipse>
+		<s:Ellipse x="{D * 0.485}" y="{D * 0.485}" width="{D * 0.03}" height="{D * 0.03}">
+			<s:fill>
+				<s:SolidColor color="#111111" />
+			</s:fill>
 		</s:Ellipse>
 	</s:Group>
 </s:Application>

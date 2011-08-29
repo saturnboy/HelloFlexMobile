@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	minWidth="100" minHeight="10"
+	creationComplete="complete()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.ChangeWatcher;
+			
+			private var _running:Boolean = false;
+			
+			private function complete():void {
+				ChangeWatcher.watch(this, 'width', changeHandler);
+				ChangeWatcher.watch(this, 'height', changeHandler);
+			}
+			
+			private function changeHandler(event:Event):void {
+				if (!_running) callLater(resizePath);
+				_running = true;
+			}
+			
+			private function resizePath():void {
+				//stuff...
+				var W:Number = this.width;
+				var w:Number = W * 0.25;
+				var h:Number = w * 0.15;
+				var j:Number = h * 0.333;
+				if (j < 2) j = 2;
+				trace('W=' + W + ' w=' + w + ' h=' + h + ' j=' + j);
+				
+				var ax:Array = [-w, -w+h, -j*5-h, -j*5, j*5, j*5+h, W, j*5+h, j*5, -j*5, -j*5-h, -w+h];
+				var ay:Array = [0, h, h, j, j, h*1.333, 0, -h*1.333, -j, -j, -h, -h];
+				
+				var dat:String = 'M ' + ax[0] + ',' + ay[0] + ' L';
+				for (var i:int = 1; i < ax.length; i++) {
+					dat += ' ' + ax[i] + ',' + ay[i];
+				}
+				dat += ' Z';
+				
+				trace('dat=' + dat);
+				path.data = dat;
+				
+				_running = false;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Path id="path">
+		<s:fill>
+			<s:SolidColor color="#ff2299" />
+		</s:fill>
+	</s:Path>
+</s:Group>
