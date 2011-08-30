@@ -96,7 +96,7 @@
 				} else {
 					_pct = (t - _timeStart) / DURATION;
 					
-					var p:Point = new Point(t - _timeStart, Math.random() * _pct); //_mic.activityLevel);
+					var p:Point = new Point(t - _timeStart, _mic.activityLevel);
 					if (p.y < 0) { p.y = 0 }
 					graph.addPoint(p);
 				}
