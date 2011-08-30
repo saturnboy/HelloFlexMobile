@@ -17,7 +17,7 @@
 				}
 				
 				//force softkeybard to hide
-				setFocus();
+				output.setFocus();
 			}
 			
 			private function searchResultHandler(e:ResultEvent):void {
