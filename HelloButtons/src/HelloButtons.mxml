@@ -22,9 +22,13 @@
 		}
 	</fx:Style>
 	
-	<s:VGroup left="25" right="25" top="10" bottom="10" verticalCenter="middle">
-		<s:Button label="Normal" width="100%" minHeight="50" styleName="greyBtn" />
-		<s:Button label="Alert"  width="100%" minHeight="50" styleName="redBtn" />
-		<s:Button label="Dark"   width="100%" minHeight="50" styleName="blackBtn" />
+	<s:VGroup left="25" right="25" top="10" bottom="10"
+			  horizontalAlign="center" verticalAlign="middle">
+		<s:Button label="Normal" styleName="greyBtn"
+				  width="100%" maxWidth="300" minHeight="50" />
+		<s:Button label="Alert"  styleName="redBtn"
+				  width="100%" maxWidth="300" minHeight="50" />
+		<s:Button label="Dark"   styleName="blackBtn"
+				  width="100%" maxWidth="300" minHeight="50" />
 	</s:VGroup>
 </s:Application>
