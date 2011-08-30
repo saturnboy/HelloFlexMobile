@@ -1,4 +1,6 @@
 package comps {
+	import flash.display.GradientType;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	
 	import mx.core.UIComponent;
@@ -13,6 +15,11 @@ package comps {
 		public var backgroundColor:uint = 0x000000;
 		public var areaColor:uint = 0xffffff;
 		
+		private var _mat:Matrix;
+		private var _colors:Array;
+		private var _alphas:Array;
+		private var _ratios:Array;
+		
 		public function AreaGraph() {
 			super();
 		}
@@ -20,7 +27,16 @@ package comps {
 		override protected function updateDisplayList(w:Number, h:Number):void {
 			super.updateDisplayList(w,h);
 			
+			//clear everything
 			this.graphics.clear();
+			
+			//setup gradient fill
+			_mat = new Matrix();
+			_colors = [0xffffff, areaColor, areaColor, 0x2299ff];
+			_alphas = [1, 1, 1, 1];
+			_ratios = [0, 112, 144, 255];
+			_mat.createGradientBox(w,h,Math.PI * 0.5);
+			
 			
 			//bg
 			this.graphics.beginFill(backgroundColor);
@@ -34,7 +50,8 @@ package comps {
 				a.push(new Point((a[a.length-1] as Point).x,0));
 				
 				//draw area
-				this.graphics.beginFill(areaColor);
+				//this.graphics.beginFill(areaColor);
+				this.graphics.beginGradientFill(GradientType.LINEAR, _colors, _alphas, _ratios, _mat);
 				this.graphics.moveTo(0,h);
 				
 				for each (var p:Point in a) {
