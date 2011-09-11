@@ -7,18 +7,20 @@
 	<fx:Script>
 		<![CDATA[
 			import spark.effects.Rotate;
+			
 			private static const VID_W:int = 250;
 			private static const VID_H:int = 200;
 			private static const VID_FPS:int = 12;
 			
 			private var _video:Video;
+			private var _rot:Rotate;
 			
 			private function complete():void {
 				if (Camera.isSupported) {
 					for (var i:int = 0; i < Camera.names.length; i++) {
 						var b:Button = new Button();
-						b.label = 'Cam ' + i;
-						b.height = 40;
+						b.label = 'Cam' + i;
+						b.minHeight = 40;
 						b.addEventListener(MouseEvent.CLICK, selectCamera);
 						cams.addElement(b);
 					}
@@ -31,68 +33,85 @@
 			}
 			
 			private function selectCamera(e:MouseEvent):void {
-				var idx:String = (e.currentTarget as Button).label.replace('Cam ', '');
+				var idx:String = (e.currentTarget as Button).label.replace('Cam', '');
 				var cam:Camera = Camera.getCamera(idx);
 				cam.setMode(VID_W, VID_H, VID_FPS);
 				_video.attachCamera(cam);
 			}
 			
-			private function rotateEasy():void {
-				if (_video != null) {
-					// easy rotation, but rotates about top left corner of element
-					_video.rotation += 90;
-				}
+			/**
+			 * Easy rotation using the rotation attribute, but only rotates about 0,0
+			 * which is the top left corner.
+			 */
+			private function rotate1():void {
+				if (_video == null) return;
+				
+				_video.rotation += 90;
 			}
 			
-			private function rotateMatrix():void {
-				if (_video != null) {
-					// rotate the hard way, with matrix math (but about the center)...
-					var w:Number = VID_W * 0.5;
-					var h:Number = VID_H * 0.5;
+			/**
+			 * Use matrix transform to rotate, requires some matrix math to translate,
+			 * then rotate, then translate back.  Net result is rotation about the
+			 * center.
+			 */
+			private function rotate2():void {
+				if (_video == null) return;
 					
-					var mat:Matrix = new Matrix();
-					mat.translate(-w, -h);
-					mat.rotate(Math.PI * 0.5);
-					mat.translate(+w, +h);
-					mat.concat(_video.transform.matrix);
-					_video.transform.matrix = mat;
-				}
+				var w:Number = VID_W * 0.5;
+				var h:Number = VID_H * 0.5;
+				
+				var mat:Matrix = new Matrix();
+				mat.translate(-w, -h);
+				mat.rotate(Math.PI * 0.5);
+				mat.translate(+w, +h);
+				mat.concat(_video.transform.matrix);
+				_video.transform.matrix = mat;
 			}
-			private function rotateEffect():void {
-				if (_video != null) {
-					// use a Rotate effect
-					var rot:Rotate = new Rotate();
-					rot.angleBy = 90;
-					rot.duration = 1000;
-					rot.target = box;
-					rot.play();
-				}
+			
+			/**
+			 * Use a rotate animation to do the rotation (automatically rotates
+			 * about the center point).  If the animation is already playing,
+			 * this function does nothing.
+			 */
+			private function rotate3():void {
+				if (_video == null) return;
+				if (_rot != null && _rot.isPlaying) return;
+				
+				_rot = new Rotate();
+				_rot.angleBy = 90;
+				_rot.duration = 1000;
+				_rot.target = box;
+				_rot.play();
 			}
 		]]>
 	</fx:Script>
 	
-	<s:Rect left="0" right="0" top="0" height="60">
-		<s:fill>
-			<s:SolidColor color="#ff2299" />
-		</s:fill>
-	</s:Rect>
+	<!-- top button bar -->
+	<s:Group left="0" right="0" top="0">
+		<s:Rect left="0" right="0" top="0" bottom="0">
+			<s:fill>
+				<s:SolidColor color="#ff2299" />
+			</s:fill>
+		</s:Rect>
+		<s:HGroup id="cams" left="10" right="10" top="10" bottom="10">
+		</s:HGroup>
+	</s:Group>
 	
-	<s:Rect left="0" right="0" bottom="0" height="60">
-		<s:fill>
-			<s:SolidColor color="#2299ff" />
-		</s:fill>
-	</s:Rect>
+	<!-- video container -->
+	<s:SpriteVisualElement id="box" width="{VID_W}" height="{VID_H}"
+						   horizontalCenter="0" verticalCenter="0" />
 	
-	<s:HGroup id="cams" left="10" right="10" top="10" height="40" gap="10" verticalAlign="middle">
-		<s:Label text="CAMERAS:" fontSize="12" />
-	</s:HGroup>
-	
-	<s:SpriteVisualElement id="box" width="{VID_W}" height="{VID_H}" horizontalCenter="0" verticalCenter="0" />
-	
-	<s:HGroup left="10" right="10" bottom="10" height="40" gap="4" verticalAlign="middle">
-		<s:Label text="ROTATE:" fontSize="12" />
-		<s:Button label="EASY" height="40" click="rotateEasy()" />
-		<s:Button label="MATRIX" height="40" click="rotateMatrix()" />
-		<s:Button label="EFFECT" height="40" click="rotateEffect()" />
-	</s:HGroup>
+	<!-- button bar -->
+	<s:Group left="0" right="0" bottom="0">
+		<s:Rect left="0" right="0" top="0" bottom="0">
+			<s:fill>
+				<s:SolidColor color="#2299ff" />
+			</s:fill>
+		</s:Rect>
+		<s:HGroup left="10" right="10" top="10" bottom="10">
+			<s:Button label="Rot1" minHeight="40" click="rotate1()" />
+			<s:Button label="Rot2" minHeight="40" click="rotate2()" />
+			<s:Button label="Rot3" minHeight="40" click="rotate3()" />
+		</s:HGroup>
+	</s:Group>
 </s:Application>
