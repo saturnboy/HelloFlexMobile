@@ -16,8 +16,8 @@
 					twitterService.send({ q:query, lang:'en' });
 				}
 				
-				//force softkeybard to hide
-				output.setFocus();
+				//force softkeybard to hide, by setting focus to another element
+				searchList.setFocus();
 			}
 			
 			private function searchResultHandler(e:ResultEvent):void {
@@ -39,11 +39,12 @@
 					a.push( { label:tweet, msg:'by ' + name + ' on ' + date, ico:icon } );
 				}
 				
-				output.dataProvider = new ArrayList(a);
+				searchList.dataProvider = new ArrayList(a);
 			}
+			
 			private function searchFaultHandler(e:FaultEvent):void {
 				trace('FAULT!');
-				output.dataProvider = new ArrayList();
+				searchList.dataProvider = new ArrayList();
 			}
 			
 		]]>
@@ -59,12 +60,12 @@
 
 	</fx:Declarations>
 	
-	<s:TextInput id="searchTxt" left="10" right="10" top="10" height="50"
+	<s:TextInput id="searchTxt" left="10" right="10" top="10" minHeight="50"
 				 maxChars="20"
 				 restrict="A-Za-z0-9 @#"
 				 enter="searchHandler()" />
 
-	<s:List id="output" left="10" right="10" bottom="10" top="70"
+	<s:List id="searchList" left="10" right="10" bottom="10" top="{searchTxt.height + 20}"
 			borderVisible="true">
 		<s:itemRenderer>
 			<fx:Component>
