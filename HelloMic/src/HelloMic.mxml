@@ -121,16 +121,21 @@
 						barColor="0xffffff" />
 	</s:VGroup>
 	
-	<!-- button bar bg -->
-	<s:Rect left="0" right="0" bottom="0" height="60">
-		<s:fill>
-			<s:SolidColor color="#2299ff" />
-		</s:fill>
-	</s:Rect>
-	
-	<!-- buttons -->
-	<s:HGroup left="10" right="10" bottom="10" height="40" gap="10" horizontalAlign="center" verticalAlign="middle">
-		<s:Button id="playBtn" label="PLAY" width="50%" height="40" click="play()" enabled="false" />
-		<s:Button id="recordBtn" label="RECORD" width="50%" height="40" click="record()" />
-	</s:HGroup>
+	<!-- button bar -->
+	<s:Group left="0" right="0" bottom="0">
+		<s:Rect left="0" right="0" top="0" bottom="0">
+			<s:fill>
+				<s:SolidColor color="#2299ff" />
+			</s:fill>
+		</s:Rect>
+		<s:HGroup left="10" right="10" top="10" bottom="10">
+			<s:Button id="playBtn" label="PLAY"
+					  width="50%" minHeight="40"
+					  click="play()"
+					  enabled="false" />
+			<s:Button id="recordBtn" label="RECORD"
+					  width="50%" minHeight="40"
+					  click="record()" />
+		</s:HGroup>
+	</s:Group>
 </s:Application>
